@@ -2,7 +2,7 @@ from typing import Literal
 import dspy
 
 class SpecialtyClassifier(dspy.Signature):
-    """Classify a wall of text to an appropriate medical specialty and confidence score. If nothing matches, return 'internal medicine' """
+    """Classify a wall of text to an appropriate medical specialty and confidence score. If nothing matches (confidence is less than 0.5), return '' """
 
     wall_of_text: str = dspy.InputField()
    
