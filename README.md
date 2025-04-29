@@ -2,6 +2,14 @@
 <tbd>
 
 ## Usage
+This code uses VertexAI via LiteLLM integration.
+So to setup the creds, hit
+```bash
+gcloud auth application-default login  
+```
+
+And ensure u add your respective `project` and `location` in `.env` file which gets loaded up at init.
+
 ```bash
 (med-classifier) ➜  med-classifier git:(main) ✗ uv run main.py
 Hello from med-classifier!
