@@ -12,9 +12,13 @@ load_dotenv()
 
 lm = dspy.LM('vertex_ai/gemini-2.0-flash-lite',
              vertex_project=os.getenv("PROJECT_ID"),
-             vertex_location=os.getenv("LOCATION")
+             vertex_location=os.getenv("LOCATION"),
+             temperature=0.1,
+             cache=True
              )
 dspy.configure(lm=lm)
+# dspy.settings.configure(track_usage=True)
+
 
 def main():
     print("Hello from med-classifier!")
@@ -27,10 +31,12 @@ def main():
     # wall_of_text = 'Running nose, sore throat, and fever'
     # wall_of_text = 'bla bla bal'
     wall_of_text = 'A healthy brain helps us feel good in all aspects of life. In order for it to work well, we need to nourish it with healthy foods, thoughts, and activities while also reducing exposure to the stuff that damages it. We collaborated with the Centre for Applied Neuroscience to help you learn more about your brain, how to keep it healthy, and how to feel better. For the next three weeks, you’ll focus on goals like understanding how to support your brain with nutrition and supplements, thinking patterns, and lifestyle adjustments. You’ll also focus on reducing exposure to negative influences.'
-    classification = specialty_classify(
+    print(f'Classifying wall of text: {wall_of_text}')
+    classification_resp = specialty_classify(
         wall_of_text=wall_of_text,
     )
-    print(classification)
+    print(f'response: {classification_resp}')
+    dspy.inspect_history(n=1)
     
 
 
