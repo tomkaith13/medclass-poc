@@ -15,14 +15,56 @@ Use this command to kickstart the webserver:
  fastapi dev main.py
 ```
 
+Then trigger a `cURL` using:
+
 ```bash
 curl --location 'http://127.0.0.1:8000/classify' --header 'Content-Type: application/json' --data '{"wall_of_text":"A healthy brain helps us feel good in all aspects of life. In order for it to work well, we need to nourish it with healthy foods, thoughts, and activities while also reducing exposure to the stuff that damages it. We collaborated with the Centre for Applied Neuroscience to help you learn more about your brain, how to keep it healthy, and how to feel better. For the next three weeks, you’ll focus on goals like understanding how to support your brain with nutrition and supplements, thinking patterns, and lifestyle adjustments. You’ll also focus on reducing exposure to negative influences."}'
 ```
 
 
+![Medical Specialty Classifier](./screenshots/example.png "Medical Specialty Classifier")
 
+The  console logs:
 ```bash
-[2025-04-29T13:41:33.281700]
+(med-classifier) ➜  med-classifier git:(main) fastapi dev main.py
+
+   FastAPI   Starting development server 🚀
+ 
+             Searching for package file structure from directories with __init__.py files
+             Importing from /Users/bthomas-mac/personal/python/med-classifier
+ 
+    module   🐍 main.py
+ 
+      code   Importing the FastAPI app object from the module with the following code:
+ 
+             from main import app
+ 
+       app   Using import string: main:app
+ 
+    server   Server started at http://127.0.0.1:8000
+    server   Documentation at http://127.0.0.1:8000/docs
+ 
+       tip   Running in development mode, for production use: fastapi run
+ 
+             Logs:
+ 
+      INFO   Will watch for changes in these directories: ['/Users/bthomas-mac/personal/python/med-classifier']
+      INFO   Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+      INFO   Started reloader process [17337] using WatchFiles
+      INFO   Started server process [17372]
+      INFO   Waiting for application startup.
+      INFO   Application startup complete.
+Classifying wall of text: A healthy brain helps us feel good in all aspects of life. In order for it to work well, we need to nourish it with healthy foods, thoughts, and activities while also reducing exposure to the stuff that damages it. We collaborated with the Centre for Applied Neuroscience to help you learn more about your brain, how to keep it healthy, and how to feel better. For the next three weeks, you’ll focus on goals like understanding how to support your brain with nutrition and supplements, thinking patterns, and lifestyle adjustments. You’ll also focus on reducing exposure to negative influences.
+response: Prediction(
+    reasoning='The text discusses brain health, focusing on nutrition, thoughts, activities, and reducing negative influences. This aligns with the scope of neurology and psychiatry, but the emphasis on mental well-being and feeling better leans more towards psychiatry.',
+    specialty='psychiatry',
+    confidence=0.8
+)
+
+
+
+
+[2025-05-05T19:06:36.556753]
 
 System message:
 
@@ -48,7 +90,7 @@ All interactions will be structured in the following way, with the appropriate v
 
 [[ ## completed ## ]]
 In adhering to this structure, your objective is: 
-        Classify a wall of text to an appropriate medical specialty and confidence score. If nothing matches, return 'internal medicine'
+        Classify a wall of text to an appropriate medical specialty and confidence score. If nothing matches (confidence is less than 0.5), return ''
 
 
 User message:
@@ -62,13 +104,13 @@ Respond with the corresponding output fields, starting with the field `[[ ## rea
 Response:
 
 [[ ## reasoning ## ]]
-The text discusses brain health, healthy habits, and lifestyle adjustments to improve well-being. This aligns with the focus of neurology and psychiatry. Given the emphasis on mental well-being and thinking patterns, psychiatry is the more relevant specialty.
+The text discusses brain health, focusing on nutrition, thoughts, activities, and reducing negative influences. This aligns with the scope of neurology and psychiatry, but the emphasis on mental well-being and feeling better leans more towards psychiatry.
 
 [[ ## specialty ## ]]
 psychiatry
 
 [[ ## confidence ## ]]
-0.95
+0.8
 
 [[ ## completed ## ]]
 
@@ -76,6 +118,7 @@ psychiatry
 
 
 
-(med-classifier) ➜  med-classifier git:(main) ✗ 
-
+cost: 6.15e-05
+cost: {}
+      INFO   127.0.0.1:53452 - "POST /classify HTTP/1.1" 200
 ```
