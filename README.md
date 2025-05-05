@@ -10,21 +10,18 @@ gcloud auth application-default login
 ```
 
 And ensure u add your respective `project` and `location` in `.env` file which gets loaded up at init.
+Use this command to kickstart the webserver:
+```bash
+ fastapi dev main.py
+```
 
 ```bash
-(med-classifier) ➜  med-classifier git:(main) ✗ uv run main.py
-Hello from med-classifier!
-['Okay, this is a test Leaguer.\n']
-Classifying wall of text: A healthy brain helps us feel good in all aspects of life. In order for it to work well, we need to nourish it with healthy foods, thoughts, and activities while also reducing exposure to the stuff that damages it. We collaborated with the Centre for Applied Neuroscience to help you learn more about your brain, how to keep it healthy, and how to feel better. For the next three weeks, you’ll focus on goals like understanding how to support your brain with nutrition and supplements, thinking patterns, and lifestyle adjustments. You’ll also focus on reducing exposure to negative influences.
-response: Prediction(
-    reasoning='The text discusses brain health, healthy habits, and lifestyle adjustments to improve well-being. This aligns with the focus of neurology and psychiatry. Given the emphasis on mental well-being and thinking patterns, psychiatry is the more relevant specialty.',
-    specialty='psychiatry',
-    confidence=0.95
-)
+curl --location 'http://127.0.0.1:8000/classify' --header 'Content-Type: application/json' --data '{"wall_of_text":"A healthy brain helps us feel good in all aspects of life. In order for it to work well, we need to nourish it with healthy foods, thoughts, and activities while also reducing exposure to the stuff that damages it. We collaborated with the Centre for Applied Neuroscience to help you learn more about your brain, how to keep it healthy, and how to feel better. For the next three weeks, you’ll focus on goals like understanding how to support your brain with nutrition and supplements, thinking patterns, and lifestyle adjustments. You’ll also focus on reducing exposure to negative influences."}'
+```
 
 
 
-
+```bash
 [2025-04-29T13:41:33.281700]
 
 System message:
