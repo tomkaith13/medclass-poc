@@ -29,7 +29,7 @@ class ClassificationRequestBody(BaseModel):
                               example="Patient presents with a rash on the arm.")
 
 
-@app.post("/classify", status_code=status.HTTP_201_CREATED)
+@app.post("/classify", status_code=status.HTTP_200_OK)
 def classify_handler( body: ClassificationRequestBody):
     wall_of_text = body.wall_of_text 
     if not wall_of_text:
