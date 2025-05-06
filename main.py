@@ -35,17 +35,19 @@ class ClassificationRequestBody(BaseModel):
 
 @app.post("/classify", status_code=status.HTTP_200_OK)
 def classify_handler( body: ClassificationRequestBody):
-    wall_of_text = body.wall_of_text 
-    
-    #  Added some basic query validation
-    if len(wall_of_text) > 2000 or len(wall_of_text) < 10:
+
+    if not body.wall_of_text:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"message": "wall_of_text is too long. Maximum length is 2000 characters."},
+            content={"message": "wall_of_text is required"},
         )
+    wall_of_text = body.wall_of_text 
+    
     classification_resp = specialty_classify(
         wall_of_text=wall_of_text,
     )
+
+
     print('*' * 50)
     print(f"response: {classification_resp}")
     dspy.inspect_history(n=1)
