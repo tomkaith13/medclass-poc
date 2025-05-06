@@ -13,11 +13,12 @@ lm = dspy.LM(
     "vertex_ai/gemini-2.0-flash-lite",
     vertex_project=os.getenv("PROJECT_ID"),
     vertex_location=os.getenv("LOCATION"),
-    temperature=0.1,
+    temperature=0.1, 
+    max_output_tokens=256,
     cache=True,
 )
 dspy.configure(lm=lm)
-# dspy.settings.configure(track_usage=True)
+dspy.settings.configure(track_usage=True)
 
 app = FastAPI()
 
@@ -36,14 +37,24 @@ def classify_handler( body: ClassificationRequestBody):
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"message": "wall_of_text is required."},
         )
-    print(f"Classifying wall of text: {wall_of_text}")
+    
+    #  Added some basic query validation
+    if len(wall_of_text) > 2000 or len(wall_of_text) < 10:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": "wall_of_text is too long. Maximum length is 2000 characters."},
+        )
     classification_resp = specialty_classify(
         wall_of_text=wall_of_text,
     )
+    print('*' * 50)
     print(f"response: {classification_resp}")
     dspy.inspect_history(n=1)
-    print(f'cost: {lm.history[-1]["cost"]}')
-    print(f'cost: {lm.history[-1]["usage"]}')
+    print('*' * 50)
+    # print(classification_resp)
+    print(f'cost of single-turn invocation: {lm.history[-1]["cost"]}')
+    print('*' * 50)
+    
     return {
         "response": classification_resp,
     }
