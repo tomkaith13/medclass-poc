@@ -2,7 +2,7 @@
 <tbd>
 
 ## Usage
-This code uses VertexAI via LiteLLM integration.
+This code uses [DSPy](https://dspy.ai/) + VertexAI via LiteLLM integration.
 Read these [pre-requisites](https://docs.litellm.ai/docs/providers/vertex#pre-requisites)
 So to setup the creds, hit
 ```bash
