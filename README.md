@@ -3,14 +3,24 @@
 
 ## Usage
 This code uses [DSPy](https://dspy.ai/) + VertexAI via LiteLLM integration.
-It also uses ReAct paradigm to extract coordinates using [Google Maps MCP Server](https://github.com/modelcontextprotocol/servers/tree/main/src/google-maps)
+
+We have 2 modules at play in the code:
+1. Classification Module that uses CoT
+2. A ReAct module that uses tools to fetch any locations passed to coordinates using [Google Maps MCP Server](https://github.com/modelcontextprotocol/servers/tree/main/src/google-maps)
+
+Both these modules are finally packaged and served to the user via a [FASTApi](https://fastapi.tiangolo.com/) server
+
+## Prequisites
 Read these [pre-requisites](https://docs.litellm.ai/docs/providers/vertex#pre-requisites)
-So to setup the creds, hit
+So to setup the creds for `VertexAI`, and once setup
+ hit
 ```bash
 gcloud auth application-default login  
 ```
 
-And ensure u add your respective `project` and `location` in `.env` file which gets loaded up at init.
+Finally, ensure you add your respective `google maps api key`,  `project` and `location` in `.env` file which gets loaded up at init.
+
+## Running the webserver
 Use this command to kickstart the webserver:
 ```bash
  fastapi dev main.py
@@ -20,6 +30,11 @@ Then trigger a `cURL` using:
 
 ```bash
 curl --location 'http://127.0.0.1:8000/classify' --header 'Content-Type: application/json' --data '{"wall_of_text":"A healthy brain helps us feel good in all aspects of life. In order for it to work well, we need to nourish it with healthy foods, thoughts, and activities while also reducing exposure to the stuff that damages it. We collaborated with the Centre for Applied Neuroscience to help you learn more about your brain, how to keep it healthy, and how to feel better. For the next three weeks, you’ll focus on goals like understanding how to support your brain with nutrition and supplements, thinking patterns, and lifestyle adjustments. You’ll also focus on reducing exposure to negative influences."}'
+```
+
+The cURL to trigger a query that includes both a symptom and some location info, try
+```bash
+curl --location 'http://127.0.0.1:8000/classify' --header 'Content-Type: application/json' --data '{"wall_of_text":"I have a skin rash and I need care. What clinics are available near my address: 1228 Balboa Ct Sunnyvale CA 94086"}'
 ```
 
 
