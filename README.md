@@ -37,8 +37,11 @@ The cURL to trigger a query that includes both a symptom and some location info,
 curl --location 'http://127.0.0.1:8000/classify' --header 'Content-Type: application/json' --data '{"wall_of_text":"I have a skin rash and I need care. What clinics are available near my address: 1228 Balboa Ct Sunnyvale CA 94086"}'
 ```
 
-
+### Screenshots
+This one is using a giant wall of text. This could be extracted using the the current screen the user is viewing.
 ![Medical Specialty Classifier](./screenshots/example.png "Medical Specialty Classifier")
+
+This one shows the user typing a query and specifying the address.
 ![Medical Specialty Classifier](./screenshots/example-with-address.png "Medical Specialty Classifier with Coordinates extracted using https://github.com/modelcontextprotocol/servers/tree/main/src/google-maps")
 
 The  console logs:
