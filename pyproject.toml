@@ -9,4 +9,5 @@ dependencies = [
     "dspy>=2.6.21",
     "fastapi[standard]>=0.115.12",
     "google-cloud-aiplatform>=1.90.0",
+    "mcp>=1.9.1",
 ]
