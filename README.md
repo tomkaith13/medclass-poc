@@ -3,6 +3,7 @@
 
 ## Usage
 This code uses [DSPy](https://dspy.ai/) + VertexAI via LiteLLM integration.
+It also uses ReAct paradigm to extract coordinates using [Google Maps MCP Server](https://github.com/modelcontextprotocol/servers/tree/main/src/google-maps)
 Read these [pre-requisites](https://docs.litellm.ai/docs/providers/vertex#pre-requisites)
 So to setup the creds, hit
 ```bash
@@ -23,6 +24,7 @@ curl --location 'http://127.0.0.1:8000/classify' --header 'Content-Type: applica
 
 
 ![Medical Specialty Classifier](./screenshots/example.png "Medical Specialty Classifier")
+![Medical Specialty Classifier](./screenshots/example-with-address.png "Medical Specialty Classifier with Coordinates extracted using https://github.com/modelcontextprotocol/servers/tree/main/src/google-maps")
 
 The  console logs:
 ```bash
