@@ -21,7 +21,7 @@ lm = dspy.LM(
     cache=True,
 )
 dspy.configure(lm=lm)
-dspy.settings.configure(track_usage=True)
+dspy.settings.configure(track_usage=True,async_max_workers=8 )
 
 
 
