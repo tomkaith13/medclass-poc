@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from contextlib import asynccontextmanager
+import asyncio
 
 
 load_dotenv()
@@ -58,6 +59,35 @@ async def tool_init():
             print(len(dspy_tools))
 
 
+async def async_location_coordinates(query: str):
+    """Convert a user query to location coordinates."""
+
+    asyncio.sleep(5)
+    print("Converting user query to location coordinates...")
+    if query.find("CN Tower") != -1:
+        return "43.6426, -79.3871"
+    elif query.find("Eiffel Tower") != -1:
+        return "48.8584, 2.2945"
+    elif query.find("Statue of Liberty") != -1:
+        return "40.6892, -74.0445"
+    return "12.34, -43.21"
+
+def sync_location_coordinates(query: str):
+    """Convert a user query to location coordinates."""
+    result = asyncio.run(async_location_coordinates(query))
+    return result
+
+
+class MyAsyncModule(dspy.Module):
+    def __init__(self, tools=None):
+        self.reactAgent = dspy.ReAct(
+            UserQueryToLocationCoordinates, tools=tools)
+    
+    async def aforward(self, query: str):
+        # Call the async tool
+        result = await self.reactAgent.acall(query=query)
+        return result
+
 async def query_run(query: str):
     print("Starting MCP client...")
     async with stdio_client(server_params) as (read, write):
@@ -72,9 +102,12 @@ async def query_run(query: str):
             for tool in tools.tools:
                 dspy_tools.append(dspy.Tool.from_mcp_tool(session, tool))
 
-            reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools)
+            
+            # reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools)
+            reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=[sync_location_coordinates])
+            reactAgent = dspy.asyncify(reactAgent)
 
-            result = reactAgent(query=query)
+            result = await reactAgent(query=query)
             # print(result)
             return result
 
@@ -124,7 +157,7 @@ async def classify_handler( body: ClassificationRequestBody):
     print('*' * 50)
 
     result = await query_run(query=wall_of_text)
-    # dspy.inspect_history(n=1)
+    dspy.inspect_history(n=1)
     # print("results::", result)
     
     
