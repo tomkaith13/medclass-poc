@@ -41,7 +41,7 @@ server_params = StdioServerParameters(
 )
 
 dspy_tools = []
-async def client_run():
+async def tool_init():
     print("Starting MCP client...")
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
@@ -57,9 +57,32 @@ async def client_run():
 
             print(len(dspy_tools))
 
+
+async def query_run(query: str):
+    print("Starting MCP client...")
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            # Initialize the connection
+            await session.initialize()
+            # List available tools
+            tools = await session.list_tools()
+
+            # Convert MCP tools to DSPy tools
+            dspy_tools = []
+            for tool in tools.tools:
+                dspy_tools.append(dspy.Tool.from_mcp_tool(session, tool))
+
+            reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools)
+
+            result = reactAgent(query=query)
+            # print(result)
+            return result
+
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await client_run()
+    await tool_init()
     yield
 
 app = FastAPI(title="Medical Specialty Classification API",
@@ -78,7 +101,7 @@ class UserQueryToLocationCoordinates(dspy.Signature):
 
      
 @app.post("/classify", status_code=status.HTTP_200_OK)
-def classify_handler( body: ClassificationRequestBody):
+async def classify_handler( body: ClassificationRequestBody):
 
     if not body.wall_of_text:
         return JSONResponse(
@@ -100,8 +123,8 @@ def classify_handler( body: ClassificationRequestBody):
     print(f'cost of single-turn invocation: {lm.history[-1]["cost"]}')
     print('*' * 50)
 
-    react = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools)
-    result = react(query=wall_of_text)
+    result = await query_run(query=wall_of_text)
+    # dspy.inspect_history(n=1)
     # print("results::", result)
     
     
