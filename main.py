@@ -62,7 +62,7 @@ async def tool_init():
 async def async_location_coordinates(query: str):
     """Convert a user query to location coordinates."""
 
-    asyncio.sleep(5)
+    await asyncio.sleep(5)
     print("Converting user query to location coordinates...")
     if query.find("CN Tower") != -1:
         return "43.6426, -79.3871"
@@ -102,7 +102,7 @@ async def query_run(query: str):
             for tool in tools.tools:
                 dspy_tools.append(dspy.Tool.from_mcp_tool(session, tool))
 
-            
+            # We are not using dspy_tools atm due to this Issue raised on github: https://github.com/stanfordnlp/dspy/issues/7799
             # reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools)
             reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=[sync_location_coordinates])
             reactAgent = dspy.asyncify(reactAgent)
