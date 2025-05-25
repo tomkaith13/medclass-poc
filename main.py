@@ -41,23 +41,6 @@ server_params = StdioServerParameters(
     env={"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY")},
 )
 
-dspy_tools = []
-async def tool_init():
-    print("Starting MCP client...")
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            # Initialize the connection
-            await session.initialize()
-            # List available tools
-            tools = await session.list_tools()
-
-            # Convert MCP tools to DSPy tools
-            # dspy_tools = []
-            for tool in tools.tools:
-                dspy_tools.append(dspy.Tool.from_mcp_tool(session, tool))
-
-            print(len(dspy_tools))
-
 
 async def fetch_home_address_coordinates():
     """Fetch home address coordinates as the last resort if location based tools fail. """
@@ -65,17 +48,6 @@ async def fetch_home_address_coordinates():
     await asyncio.sleep(1)  # Simulate async work
 
     return "12.34, -43.21"
-
-
-class MyAsyncModule(dspy.Module):
-    def __init__(self, tools=None):
-        self.reactAgent = dspy.ReAct(
-            UserQueryToLocationCoordinates, tools=tools)
-    
-    async def aforward(self, query: str):
-        # Call the async tool
-        result = await self.reactAgent.acall(query=query)
-        return result
 
 async def query_run(query: str):
     print("Starting MCP client...")
@@ -99,14 +71,9 @@ async def query_run(query: str):
 
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await tool_init()
-    yield
-
 app = FastAPI(title="Medical Specialty Classification API",
               description="This API classifies a wall of text to an appropriate medical specialty and confidence score.",
-              version="1.0.0", lifespan=lifespan
+              version="1.0.0"
               )
 
 class UserQueryToLocationCoordinates(dspy.Signature):
@@ -114,7 +81,7 @@ class UserQueryToLocationCoordinates(dspy.Signature):
 
     query: str = dspy.InputField()
     location_coordinates: str = dspy.OutputField(
-        desc=("Extract any possible address from the query. Use that address location to get coordinates in the format '(latitude, longitude)'. If there is no location, return '0, 0'."),
+        desc=("Extract any possible address from the query. Use that address location to get coordinates in the format '(latitude, longitude)'."),
         example="37.7749, -122.4194",
     )
 
