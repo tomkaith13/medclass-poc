@@ -19,7 +19,7 @@ lm = dspy.LM(
     vertex_location=os.getenv("LOCATION"),
     temperature=0.1, 
     max_output_tokens=256,
-    cache=True,
+    cache=False,
 )
 dspy.configure(lm=lm)
 dspy.settings.configure(track_usage=True,async_max_workers=8 )
@@ -59,23 +59,12 @@ async def tool_init():
             print(len(dspy_tools))
 
 
-async def async_location_coordinates(query: str):
-    """Convert a user query to location coordinates."""
+async def fetch_home_address_coordinates():
+    """Fetch home address coordinates as the last resort if location based tools fail. """
 
-    await asyncio.sleep(5)
-    print("Converting user query to location coordinates...")
-    if query.find("CN Tower") != -1:
-        return "43.6426, -79.3871"
-    elif query.find("Eiffel Tower") != -1:
-        return "48.8584, 2.2945"
-    elif query.find("Statue of Liberty") != -1:
-        return "40.6892, -74.0445"
+    await asyncio.sleep(1)  # Simulate async work
+
     return "12.34, -43.21"
-
-def sync_location_coordinates(query: str):
-    """Convert a user query to location coordinates."""
-    result = asyncio.run(async_location_coordinates(query))
-    return result
 
 
 class MyAsyncModule(dspy.Module):
@@ -101,13 +90,10 @@ async def query_run(query: str):
             dspy_tools = []
             for tool in tools.tools:
                 dspy_tools.append(dspy.Tool.from_mcp_tool(session, tool))
-
-            # We are not using dspy_tools atm due to this Issue raised on github: https://github.com/stanfordnlp/dspy/issues/7799
-            # reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools)
-            reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=[sync_location_coordinates])
-            reactAgent = dspy.asyncify(reactAgent)
-
-            result = await reactAgent(query=query)
+            
+            reactAgent = dspy.ReAct(UserQueryToLocationCoordinates, tools=dspy_tools + [fetch_home_address_coordinates])
+            
+            result = await reactAgent.acall(query=query)
             # print(result)
             return result
 
@@ -124,7 +110,7 @@ app = FastAPI(title="Medical Specialty Classification API",
               )
 
 class UserQueryToLocationCoordinates(dspy.Signature):
-    """Convert a user query to location coordinates."""
+    """Convert a user query to location coordinates. If location is not found, call the fetch_home_coordinates tool."""
 
     query: str = dspy.InputField()
     location_coordinates: str = dspy.OutputField(
