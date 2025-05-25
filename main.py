@@ -110,7 +110,7 @@ app = FastAPI(title="Medical Specialty Classification API",
               )
 
 class UserQueryToLocationCoordinates(dspy.Signature):
-    """Convert a user query to location coordinates. If location is not found, call the fetch_home_coordinates tool."""
+    """Convert a user query to location coordinates. If location is not found, call the fetch_home_coordinates tool and return that address."""
 
     query: str = dspy.InputField()
     location_coordinates: str = dspy.OutputField(
