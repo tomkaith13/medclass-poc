@@ -21,8 +21,8 @@ lm = dspy.LM(
     max_output_tokens=256,
     cache=True,
 )
-dspy.configure(lm=lm)
-dspy.settings.configure(track_usage=True,async_max_workers=8 )
+dspy.configure(lm=lm, track_usage=True, async_max_workers=8)
+# dspy.settings.configure(track_usage=True,async_max_workers=8 )
 
 
 
