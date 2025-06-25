@@ -44,16 +44,13 @@ server_params = StdioServerParameters(
 async def fetch_home_address_coordinates():
     """Fetch home address coordinates as the last resort if location based tools fail. """
 
-    await asyncio.sleep(1)  # Simulate async work
-
     return "12.34, -43.21"
 
 def fetch_work_address_coordinates():
     """Fetch work address coordinates. If this fails, use home address coordinates using fetch_home_address_coordinates tool. """
 
-    # Uncomment the following line to simulate a failure
-    # raise Exception("Work address coordinates not found. Using home address coordinates instead.")
-    return "56.78, -87.65"
+    # raise RuntimeError("Work address coordinates not found. Falling back to home address coordinates.")
+    return "23.45, -54.32"
 
 async def query_run(query: str):
     print("Starting MCP client...")
