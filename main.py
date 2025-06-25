@@ -75,8 +75,8 @@ async def query_run(query: str):
 
 
 
-app = FastAPI(title="Medical Specialty Classification API",
-              description="This API classifies a wall of text to an appropriate medical specialty and confidence score.",
+app = FastAPI(title="Medical Specialty Classification API with a Location Query Tool",
+              description="This API classifies a wall of text to an appropriate medical specialty and confidence score. It also includes a tool to convert user queries into location coordinates.",
               version="1.0.0"
               )
 
